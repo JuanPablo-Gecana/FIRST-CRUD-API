@@ -45,6 +45,33 @@ app.post('/tasks', (req, res) => {
     res.status(201).json(tasks);
 })
 
+app.put('/tasks/:id', (req, res) => {
+    const taskNo = req.params.id;
+    const taskElem = tasks.find(i => i.id == taskNo);
 
+    if (!taskElem) 
+        return res.status(404).json({ error: "ID doesnt exist."});
+    else if (!taskElem.title)
+        return res.status(400).json({ error: "Invalid Input"});
+
+    if (req.body.title !== undefined)
+        taskElem.title = req.body.title;
+    if (req.body.done !== undefined)
+        taskElem.done = req.body.done;
+        
+    res.json(tasks);
+})
+
+app.delete('/tasks/:id', (req, res) => {
+    const numToDel = req.params.id;
+    const taskToDel = tasks.findIndex(i => i.id == numToDel);
+
+    if (!taskToDel)
+        return res.status(404).json({error: "Unknown ID"});
+
+    tasks.splice(taskToDel, 1)[0];
+
+    res.status(204).send();
+})
 
 app.listen(3000, () => console.log("Server is up and running!"));
