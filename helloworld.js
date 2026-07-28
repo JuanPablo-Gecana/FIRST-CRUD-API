@@ -1,7 +1,11 @@
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./openapi.json');
 const app = express();
 
 app.use(express.json());
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 let tasks = [
     {id: 1, title: "Take a Bath", done: true},

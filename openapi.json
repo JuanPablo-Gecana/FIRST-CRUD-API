@@ -1,0 +1,140 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "My First API",
+    "description": "My first CRUD API.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/tasks": {
+      "get": {
+        "summary": "Retrieve a list of tasks",
+        "responses": {
+          "200": {
+            "description": "A successful list of tasks."
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates a task",
+        "requestBody": {
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            "400": {
+            "description": "Entered a bad input"
+            },
+            "201": {
+            "description": "Successfully created a task"
+            }
+        }
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "summary": "Getting a task with its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the task that has to be returned",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Task affiliated with the ID is successfully returned"
+          },
+          "400": {
+            "description": "The task affiliated with the ID does not exist"
+          }
+        }
+      },
+      "put": {
+        "summary": "Used to update each task",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID whose task has to be updated",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "done": {
+                      "type": "boolean"
+                    }
+                  }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The task is successfully updated"
+          },
+          "400": {
+            "description": "The entered input is invalid"
+          },
+          "404": {
+            "description": "The ID entered doesnt exist"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deleting a task using its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the task to remove",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The Task affiliated with the ID is successfully removed and does not return any output"
+          },
+          "400": {
+            "description": "The ID of the to be deleted task does not exist"
+          }
+        }
+      }
+    }
+  }
+}
