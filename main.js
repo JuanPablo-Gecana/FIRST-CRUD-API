@@ -2,6 +2,7 @@ const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./openapi.json');
 const app = express();
+const db = require('./tasks.js');
 
 app.use(express.json());
 
@@ -14,8 +15,10 @@ let tasks = [
 ];
 
 app.get('/tasks', (req, res) => {
-    res.json(tasks);
-})
+    const getAll = db.prepare('SELECT * FROM tasks').all();
+    const rows = JSON.stringify(getAll);
+    res.json(rows);
+});
 
 app.get('/', (req, res) => {
     res.json({ "name": "Task API", "version": "1.0", "endpoints": ["/tasks"] });
@@ -26,13 +29,13 @@ app.get('/health', (req, res) => {
 })
 
 app.get('/tasks/:id', (req, res) => {
-    const taskNum = req.params.id;
-    const taskItem = tasks.find(i => i.id == taskNum);
+    const getItem = db.prepare('SELECT * FROM tasks WHERE id = ?').get(req.params.id);
+    const rows = JSON.stringify(getItem);
 
-    if (!taskItem)
-       return res.status(404).json({ error: "Task 99 not found" });
-
-    res.json(taskItem);
+    if (!getItem)
+       return res.status(404).json({ error: "Task not found" });
+     
+    res.json(rows);
 })
 
 app.post('/tasks', (req, res) => {
@@ -42,38 +45,39 @@ app.post('/tasks', (req, res) => {
         return res.status(400).json({ error: "Bad Input"});
     }
 
-    let newElement = { id: tasks.length + 1, title: newTitle, done: false };
+    const insert = db.prepare(`INSERT INTO tasks (title, done) VALUES (?, ?) ON CONFLICT(title) DO NOTHING`);
+    insert.run(JSON.stringify(newTitle), 0);
 
-    tasks.push(newElement);
-
-    res.status(201).json(tasks);
+    const getAll = db.prepare('SELECT * FROM tasks').all();
+    const rows = JSON.stringify(getAll);
+    res.json(rows);
 })
 
 app.put('/tasks/:id', (req, res) => {
     const taskNo = req.params.id;
-    const taskElem = tasks.find(i => i.id == taskNo);
+    const taskElem = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskNo);
 
     if (!taskElem) 
         return res.status(404).json({ error: "ID doesnt exist."});
     else if (!taskElem.title)
         return res.status(400).json({ error: "Invalid Input"});
 
-    if (req.body.title !== undefined)
-        taskElem.title = req.body.title;
-    if (req.body.done !== undefined)
-        taskElem.done = req.body.done;
-        
-    res.json(tasks);
+    const setup = db.prepare(`UPDATE tasks SET title = ?, done = ? WHERE id = ?`);
+    const update = setup.run(JSON.stringify(req.body.title), JSON.stringify(req.body.done), taskNo);
+
+    const getAll = db.prepare('SELECT * FROM tasks').all();
+    const uptasks = JSON.stringify(getAll);
+    res.json(uptasks);
 })
 
 app.delete('/tasks/:id', (req, res) => {
     const numToDel = req.params.id;
-    const taskToDel = tasks.findIndex(i => i.id == numToDel);
+    const taskToDel = db.prepare('SELECT * FROM tasks WHERE id = ?').get(numToDel);
 
     if (!taskToDel)
         return res.status(404).json({error: "Unknown ID"});
 
-    tasks.splice(taskToDel, 1)[0];
+    const del = db.prepare(`DELETE FROM tasks WHERE id = ?`).run(numToDel);
 
     res.status(204).send();
 })

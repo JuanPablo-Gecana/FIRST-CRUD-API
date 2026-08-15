@@ -9,7 +9,7 @@ db.exec(`
     )`
 );
 
-const input = db.prepare(`INSERT INTO tasks (title) VALUES (?) ON CONFLICT(title) DO NOTHING`);
+const input = db.prepare(`INSERT OR IGNORE INTO tasks (title) VALUES (?)`);
 
 const insertTask = db.transaction((tasksArray) => {
     for (const task of tasksArray) {
@@ -18,7 +18,9 @@ const insertTask = db.transaction((tasksArray) => {
 });
 
 insertTask([
-    { title: 'Buy groceries' },
-    { title: 'Clean the house' },
-    { title: 'Finish the project' }
+    { title: 'Take a Bath' },
+    { title: 'Exercise' },
+    { title: 'Practice coding' }
 ])
+
+module.exports = db;
