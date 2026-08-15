@@ -39,3 +39,18 @@ For Installing swagger ui: `npm install swagger-ui-express` <br>
 | POST /tasks/{id} | Creating an item and adding it to the overall list | HTTP/1.1 201 Created<br>X-Powered-By: Express<br>Content-Type: application/json; charset=utf-8<br>Content-Length: 171<br>ETag: W/"ab-4jVUOW7909l4ozQEmQDl7mCoqXM"<br>Date: Fri, 31 Jul 2026 06:43:34 GMT<br>Connection: keep-alive<br>Keep-Alive: timeout=5<br><br>[{"id":1,"title":"Take a Bath","done":true},{"id":2,"title":"Exercise","done":true},{"id":3,"title":"Practice coding","done":false},{"id":4,"title":"Task 4","done":false}] |<img width="1209" height="352" alt="post" src="https://github.com/user-attachments/assets/3d189d8d-e015-4aaf-a3be-433ae3e837f2" />
 | PUT /tasks/{id} | Updating an item that reflects on the overall list | HTTP/1.1 200 OK<br>X-Powered-By: Express<br>Content-Type: application/json; charset=utf-8<br>Content-Length: 173<br>ETag: W/"ad-NskWbG9AFeKFN3CApJol2bqjzkE"<br>Date: Fri, 31 Jul 2026 06:46:16 GMT<br>Connection: keep-alive<br>Keep-Alive: timeout=5<br><br>[{"id":1,"title":"Take a Bath","done":true},{"id":2,"title":"Exercise","done":true},{"id":3,"title":"Practice coding","done":false},{"id":4,"title":"Buy milk","done":false}] | <img width="1209" height="354" alt="put" src="https://github.com/user-attachments/assets/ef3283b8-7714-43f0-8b78-4995b0c17173" />
 | DELETE /tasks/{id} | Deleting an item on the list | HTTP/1.1 204 No Content<br>X-Powered-By: Express<br>Date: Fri, 31 Jul 2026 06:46:51 GMT<br>Connection: keep-alive<br>Keep-Alive: timeout=5 | <img width="1206" height="163" alt="delete" src="https://github.com/user-attachments/assets/8af6471b-9d64-4a5f-8423-e0a8d520aea6" />
+
+## Database
+
+### Why use Sqlite? <br>
+- Sqlite requires minimal to zero setup, it also offers a single file configuration, and every server restarts; every items in the database stays unchanged.
+
+### How does it work? <br>
+- Upon launching the main.js file, the file called "tasks.db" will be created. This will be your database and it will stay in with your folder.
+
+### How to install Sqlite? <br>
+- You can use this command to download sqlite within node.js: <br>
+Command: `npm install better-sqlite3`
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-16 001559" src="https://github.com/user-attachments/assets/829f6a9e-524f-438e-a0fe-dc074a6ccf74" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-16 001615" src="https://github.com/user-attachments/assets/072dac04-c57f-43ca-949f-000687e3521e" />
