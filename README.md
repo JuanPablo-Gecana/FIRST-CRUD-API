@@ -80,7 +80,7 @@ The API is at http://localhost:3000 and the Swagger page is at http://localhost:
 The whole container starts up with `docker compose up --build.`and then the user inputs the task title and if its done with a true or false and then, it will go through the post route and the task.js file will do the store and came back to the mail.js back to the user. This works on all CRUD operations. Even we type `docker compose down` to shutdown the whole container and we start it again, the contents that we did last time before we shut it down stays.<br><br>
 
 ### Example
-`$ curl -i http://localhost:3000/tasks<br>
+$ curl -i http://localhost:3000/tasks<br>
 HTTP/1.1 200 OK<br>
 X-Powered-By: Express<br>
 Content-Type: application/json; charset=utf-8<br>
@@ -90,4 +90,4 @@ Date: Sat, 21 Nov 2026 16:19:59 GMT<br>
 Connection: keep-alive<br>
 Keep-Alive: timeout=5<br>
 <br>
-[{"id":1,"title":"Take a bath","done":false},{"id":2,"title":"Exercise","done":false},{"id":3,"title":"Practice Coding","done":false},{"id":4,"title":"Learn Docker","done":false}]`
+[{"id":1,"title":"Take a bath","done":false},{"id":2,"title":"Exercise","done":false},{"id":3,"title":"Practice Coding","done":false},{"id":4,"title":"Learn Docker","done":false}]
