@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./openapi.json');
@@ -82,4 +83,12 @@ app.delete('/tasks/:id', (req, res) => {
     res.status(204).send();
 })
 
-app.listen(3000, () => console.log("Server is up and running!"));
+async function start() {
+    await db.init();
+    app.listen(3000, () => console.log("Server is up and running!"));
+}
+
+start().catch((error) =>  {
+    console.error("Failed to start.", error);
+    process.exit(1);
+});

@@ -1,26 +1,17 @@
-const Database = require('better-sqlite3');
-const db = new Database('./tasks.db');
+const { Pool } = require('pg');
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-db.exec(`
-    CREATE TABLE IF NOT EXISTS tasks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        title TEXT NOT NULL UNIQUE,
-        done BOOLEAN NOT NULL DEFAULT 0
-    )`
-);
+const titles = ["Take a bath", "Exercise", "Practice Coding"];
 
-const input = db.prepare(`INSERT OR IGNORE INTO tasks (title) VALUES (?)`);
+async function init() {
+    await pool.query("CREATE TABLE IF NOT EXISTS tasks (id SERIAL PRIMARY KEY, title TEXT NOT NULL, done BOOLEAN NOT NULL DEFAULT false)");
+    const result = await pool.query("SELECT COUNT(*) FROM tasks"); 
 
-const insertTask = db.transaction((tasksArray) => {
-    for (const task of tasksArray) {
-        input.run(task.title);
+    if (Number(result.rows[0].count) === 0){
+      for (const title of titles){
+        await pool.query("INSERT INTO tasks (title) VALUES ($1)", [title]);
+      }
     }
-});
+};
 
-insertTask([
-    { title: 'Take a Bath' },
-    { title: 'Exercise' },
-    { title: 'Practice coding' }
-])
-
-module.exports = db;
+module.exports = { init };
