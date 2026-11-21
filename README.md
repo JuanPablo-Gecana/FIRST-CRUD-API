@@ -54,3 +54,18 @@ Command: `npm install better-sqlite3`
 
 <img width="1920" height="1020" alt="Screenshot 2026-08-16 001559" src="https://github.com/user-attachments/assets/829f6a9e-524f-438e-a0fe-dc074a6ccf74" />
 <img width="1920" height="1020" alt="Screenshot 2026-08-16 001615" src="https://github.com/user-attachments/assets/072dac04-c57f-43ca-949f-000687e3521e" />
+
+## Docker for POSTGRESQL
+
+- Download Docker Desktop.
+- Run this command on terminal: `docker run --name taskdb -e POSTGRES_PASSWORD=dev -e POSTGRES_DB=tasks -p 5432:5432 -v taskdata:/var/lib/postgresql/data -d postgres:16`
+
+### Useful Docker Commands
+| Command | What it does |
+| --- | --- |
+| `docker ps` | Lists running containers |
+| `docker ps -a` | Lists all containers, including stopped ones |
+| `docker stop taskdb` | Stops the container (data stays in the volume) |
+| `docker start taskdb` | Starts it again |
+| `docker logs taskdb` | Shows the container's output, useful for errors |
+| `docker rm taskdb` | Deletes the container (the volume stays) |
