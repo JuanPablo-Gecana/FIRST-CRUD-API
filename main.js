@@ -9,16 +9,14 @@ app.use(express.json());
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-let tasks = [
-    {id: 1, title: "Take a Bath", done: true},
-    {id: 2, title: "Exercise", done: true},
-    {id: 3, title: "Practice coding", done: false}
-];
-
-app.get('/tasks', (req, res) => {
-    const getAll = db.prepare('SELECT * FROM tasks').all();
-    const rows = JSON.stringify(getAll);
+app.get('/tasks', async (req, res) => {
+  try {
+    const rows = await db.getAll();
     res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 app.get('/', (req, res) => {
@@ -29,15 +27,20 @@ app.get('/health', (req, res) => {
     res.json({ "status": "ok"});
 })
 
-app.get('/tasks/:id', (req, res) => {
-    const getItem = db.prepare('SELECT * FROM tasks WHERE id = ?').get(req.params.id);
-    const rows = JSON.stringify(getItem);
+app.get('/tasks/:id', async (req, res) => {
+  try {
+    const task = await db.getById(req.params.id);
 
-    if (!getItem)
-       return res.status(404).json({ error: "Task not found" });
-     
-    res.json(rows);
-})
+    if (!task){
+        return res.status(404).json({ error: "Task not found"});
+    }
+
+    res.json(task);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 app.post('/tasks', (req, res) => {
     const newTitle = req.body.title;

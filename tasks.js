@@ -14,4 +14,19 @@ async function init() {
     }
 };
 
-module.exports = { init };
+async function getAll() {
+  const result = await pool.query("SELECT * FROM tasks ORDER BY id");
+  return result.rows;
+}
+
+async function getById(id) {
+  if (!Number.isInteger(Number(id))){
+    return null;
+  }
+
+  const result = await pool.query("SELECT * FROM tasks WHERE id = $1", [id]);
+  return result.rows[0];
+}
+
+// Update the export at the bottom of the file:
+module.exports = { init, getAll, getById };
