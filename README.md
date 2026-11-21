@@ -55,10 +55,12 @@ Command: `npm install better-sqlite3`
 <img width="1920" height="1020" alt="Screenshot 2026-08-16 001559" src="https://github.com/user-attachments/assets/829f6a9e-524f-438e-a0fe-dc074a6ccf74" />
 <img width="1920" height="1020" alt="Screenshot 2026-08-16 001615" src="https://github.com/user-attachments/assets/072dac04-c57f-43ca-949f-000687e3521e" />
 
-## Docker for POSTGRESQL
+## Docker for POSTGRESQL<br><br>
 
-- Download Docker Desktop.
-- Run this command on terminal: `docker run --name taskdb -e POSTGRES_PASSWORD=dev -e POSTGRES_DB=tasks -p 5432:5432 -v taskdata:/var/lib/postgresql/data -d postgres:16`
+- Download Docker Desktop and make sure it is running.<br>
+- Copy the env.example to your own .env with your own password.<br>
+- Start the stack with `docker compose up --build.`<br>
+<br>
 
 ### Useful Docker Commands
 | Command | What it does |
@@ -69,3 +71,10 @@ Command: `npm install better-sqlite3`
 | `docker start taskdb` | Starts it again |
 | `docker logs taskdb` | Shows the container's output, useful for errors |
 | `docker rm taskdb` | Deletes the container (the volume stays) |
+
+The API is at http://localhost:3000 and the Swagger page is at http://localhost:3000/docs. Stop everything with docker compose down (your data is kept in a Docker volume).<br><br>
+
+### How It Works 
+
+<br><br>
+The whole container starts up with `docker compose up --build.`and then the user inputs the task title and if its done with a true or false and then, it will go through the post route and the task.js file will do the store and came back to the mail.js back to the user. This works on all CRUD operations. Even we type `docker compose down` to shutdown the whole container and we start it again, the contents that we did last time before we shut it down stays.
