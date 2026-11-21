@@ -42,49 +42,66 @@ app.get('/tasks/:id', async (req, res) => {
   }
 });
 
-app.post('/tasks', (req, res) => {
-    const newTitle = req.body.title;
+app.post('/tasks', async (req, res) => {
+  try {
+    const { title, done } = req.body ?? {};
 
-    if (!newTitle) {
-        return res.status(400).json({ error: "Bad Input"});
+    if (typeof title !== "string" || !title.trim()){
+        return res.status(400).json({ error: "Bad Input "});
     }
 
-    const insert = db.prepare(`INSERT INTO tasks (title, done) VALUES (?, ?) ON CONFLICT(title) DO NOTHING`);
-    insert.run(JSON.stringify(newTitle), 0);
+    if (done !== undefined && typeof done !== "boolean"){
+        return res.status(400).json({ error: "Bad Input "});
+    }
 
-    const getAll = db.prepare('SELECT * FROM tasks').all();
-    const rows = JSON.stringify(getAll);
-    res.json(rows);
-})
+    const task = await db.createTask(title.trim(), done ?? false);
+    return res.status(201).json(task);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
-app.put('/tasks/:id', (req, res) => {
-    const taskNo = req.params.id;
-    const taskElem = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskNo);
+app.put('/tasks/:id', async (req, res) => {
+  try {
+    const { title, done } = req.body ?? {};
 
-    if (!taskElem) 
-        return res.status(404).json({ error: "ID doesnt exist."});
-    else if (!taskElem.title)
+    if (!title){
+        res.status(400).json({ error: "Invalid Input"});
+    }
+
+    if (done !== undefined && typeof done !== "boolean"){
+        done = false;
+    } else if (typeof done !== "boolean"){
         return res.status(400).json({ error: "Invalid Input"});
+    }
 
-    const setup = db.prepare(`UPDATE tasks SET title = ?, done = ? WHERE id = ?`);
-    const update = setup.run(JSON.stringify(req.body.title), JSON.stringify(req.body.done), taskNo);
+    const task = await db.updateTask(req.params.id, title.trim(), done ?? false);
 
-    const getAll = db.prepare('SELECT * FROM tasks').all();
-    const uptasks = JSON.stringify(getAll);
-    res.json(uptasks);
-})
+    if (!task){
+        res.status(404).json({ error: "Task not Found"});
+    }
 
-app.delete('/tasks/:id', (req, res) => {
-    const numToDel = req.params.id;
-    const taskToDel = db.prepare('SELECT * FROM tasks WHERE id = ?').get(numToDel);
+    res.json(task);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
-    if (!taskToDel)
-        return res.status(404).json({error: "Unknown ID"});
+app.delete('/tasks/:id', async (req, res) => {
+  try {
+    const deleted = await db.deleteTask(req.params.id);
+    if (!deleted){
+        res.status(404).json({ error: "Task not found"});
+    }
 
-    const del = db.prepare(`DELETE FROM tasks WHERE id = ?`).run(numToDel);
-
-    res.status(204).send();
-})
+    res.status(204).send()
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 async function start() {
     await db.init();
